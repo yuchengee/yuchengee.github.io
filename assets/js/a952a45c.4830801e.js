@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkblog=self.webpackChunkblog||[]).push([[7],{27501:l=>{l.exports=JSON.parse('{"label":"ecql","permalink":"/blog/tags/ecql","allTagsPath":"/blog/tags","count":1,"unlisted":false}')}}]);

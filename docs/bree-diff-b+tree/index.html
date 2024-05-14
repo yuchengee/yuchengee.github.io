@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-interview/database/bree-diff-b+tree" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.1.0">
+<title data-rh="true">1.B树和B+树的区别，为什么Mysql使用B+树存储索引 | 渔歌-yuchengee-成长为更强大的自己</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://yuchengee.github.io/docs/bree-diff-b+tree"><meta data-rh="true" property="og:locale" content="zh_CN"><meta data-rh="true" name="docusaurus_locale" content="zh-CN"><meta data-rh="true" name="docsearch:language" content="zh-CN"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="1.B树和B+树的区别，为什么Mysql使用B+树存储索引 | 渔歌-yuchengee-成长为更强大的自己"><meta data-rh="true" name="description" content="这个问题比较复杂，还在学习总结中。"><meta data-rh="true" property="og:description" content="这个问题比较复杂，还在学习总结中。"><meta data-rh="true" name="keywords" content="btree,b+tree"><link data-rh="true" rel="icon" href="/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://yuchengee.github.io/docs/bree-diff-b+tree"><link data-rh="true" rel="alternate" href="https://yuchengee.github.io/docs/bree-diff-b+tree" hreflang="zh-CN"><link data-rh="true" rel="alternate" href="https://yuchengee.github.io/docs/bree-diff-b+tree" hreflang="x-default"><link rel="preconnect" href="https://www.google-analytics.com">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<script async src="https://www.googletagmanager.com/gtag/js?id=1"></script>
+<script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","1",{anonymize_ip:!0})</script>
+
+
+
+
+
+<script>var _hmt=_hmt||[];!function(){var e=document.createElement("script");e.src="https://hm.baidu.com/hm.js?6dfb38b0fcc241bcb4c7486723b10185";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}()</script>
+<link rel="alternate" type="application/rss+xml" href="/blog/rss.xml" title="渔歌 RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/blog/atom.xml" title="渔歌 Atom Feed">
+<link rel="alternate" type="application/json" href="/blog/feed.json" title="渔歌 JSON Feed">
+<meta name="description" content="渔歌的个人博客">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Normal.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/misans@4.0.0/lib/Normal/MiSans-Semibold.min.css"><link rel="stylesheet" href="/assets/css/styles.c47cd496.css">
+<script src="/assets/js/runtime~main.1563bf99.js" defer="defer"></script>
+<script src="/assets/js/main.5ca31769.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<script>!function(){function t(t){document.documentElement.setAttribute("data-theme",t)}var e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return localStorage.getItem("theme")}catch(t){}}();t(null!==e?e:"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><div role="region" aria-label="跳到主要内容"><a class="skipToContent_NYV2" href="#__docusaurus_skipToContent_fallback">跳到主要内容</a></div><nav aria-label="主导航" class="navbar navbar--fixed-top navbarHideable_ruDu"><div class="navbar__inner"><div class="navbar__items"><button aria-label="切换导航栏" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/"><div class="navbar__logo"><img src="/img/logo.png" alt="yuchengee" class="themedComponent_TcKe themedComponent--light_eba_"><img src="/img/logo.png" alt="yuchengee" class="themedComponent_TcKe themedComponent--dark_CFQW"></div><b class="navbar__title text--truncate"></b></a></div><div class="navbar__items navbar__items--right"><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a class="navbar__link" aria-haspopup="true" aria-expanded="false" role="button" href="/blog">👨‍💻 博客</a><ul class="dropdown__menu"><li><a class="dropdown__link" href="/blog/tags">标签</a></li><li><a class="dropdown__link" href="/blog/archive">归档</a></li></ul></div><a class="navbar__item navbar__link" href="/docs/skill/">👨🏻‍🌾 笔记</a><a class="navbar__item navbar__link" href="/docs/interview/">👨‍🎓 面试</a><a class="navbar__item navbar__link" href="/docs/tools/">🛠 工具</a><div class="navbar__item dropdown dropdown--hoverable dropdown--right"><a href="#" aria-haspopup="true" aria-expanded="false" role="button" class="navbar__link">📡 其他</a><ul class="dropdown__menu"><li><a class="dropdown__link" href="/project">项目</a></li><li><a class="dropdown__link" href="/resources">资源</a></li><li><a class="dropdown__link" href="/gpt">GPT</a></li></ul></div><div class="toggle_nuKp colorModeToggle_We2L"><button class="clean-btn toggleButton_VbXV toggleButtonDisabled_Ny53" type="button" disabled="" title="切换浅色/暗黑模式（当前为浅色模式）" aria-label="切换浅色/暗黑模式（当前为浅色模式）" aria-live="polite"><svg viewBox="0 0 24 24" width="24" height="24" class="lightToggleIcon_pOV_"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" class="darkToggleIcon_N8qO"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg></button></div><div class="navbarSearchContainer_roVj"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="main-wrapper mainWrapper_KS6g"><div class="docsWrapper_RBRE"><button aria-label="回到顶部" class="clean-btn theme-back-to-top-button backToTopButton_bAnE" type="button"></button><div class="docRoot_e8qJ"><aside class="theme-doc-sidebar-container docSidebarContainer_tYKR"><div class="sidebarViewport_jcVE"><div class="sidebar_gnbR sidebarWithHideableNavbar_KOxR"><a tabindex="-1" class="sidebarLogo_SnEl" href="/"><img src="/img/logo.png" alt="yuchengee" class="themedComponent_TcKe themedComponent--light_eba_"><img src="/img/logo.png" alt="yuchengee" class="themedComponent_TcKe themedComponent--dark_CFQW"><b></b></a><nav aria-label="文档侧边栏" class="menu thin-scrollbar menu_scEv"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/docs/interview">面试题集</a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/docs/javadev-readme">Java开发</a><button aria-label="展开侧边栏分类 &#x27;Java开发&#x27;" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist menu__link--active" aria-expanded="true" href="/docs/database-readme">数据库开发</a><button aria-label="折叠侧边栏分类 &#x27;数据库开发&#x27;" type="button" class="clean-btn menu__caret"></button></div><ul style="display:block;overflow:visible;height:auto" class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/docs/bree-diff-b+tree">1.B树和B+树的区别，为什么Mysql使用B+树存储索引</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/mysql-index">2.MySq常见的索引类型及语法</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/mysql-alter-usage">3.ALTER语句的基本用法</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/docs/mysql-line-lock">4.行锁</a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="menu__link menu__link--sublist" aria-expanded="false" href="/docs/middleware-readme">中间件</a><button aria-label="展开侧边栏分类 &#x27;中间件&#x27;" type="button" class="clean-btn menu__caret"></button></div></li></ul></nav><button type="button" title="收起侧边栏" aria-label="收起侧边栏" class="button button--secondary button--outline collapseSidebarButton_RRJA"><svg width="20" height="20" aria-hidden="true" class="collapseSidebarButtonIcon_Yy5V"><g fill="#7a7a7a"><path d="M9.992 10.023c0 .2-.062.399-.172.547l-4.996 7.492a.982.982 0 01-.828.454H1c-.55 0-1-.453-1-1 0-.2.059-.403.168-.551l4.629-6.942L.168 3.078A.939.939 0 010 2.528c0-.548.45-.997 1-.997h2.996c.352 0 .649.18.828.45L9.82 9.472c.11.148.172.347.172.55zm0 0"></path><path d="M19.98 10.023c0 .2-.058.399-.168.547l-4.996 7.492a.987.987 0 01-.828.454h-3c-.547 0-.996-.453-.996-1 0-.2.059-.403.168-.551l4.625-6.942-4.625-6.945a.939.939 0 01-.168-.55 1 1 0 01.996-.997h3c.348 0 .649.18.828.45l4.996 7.492c.11.148.168.347.168.55zm0 0"></path></g></svg></button></div></div></aside><main class="docMainContainer_dAjD"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_Fwht"><div class="docItemContainer_mrV7"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer__546" aria-label="页面路径"><ul class="breadcrumbs" itemscope="" itemtype="https://schema.org/BreadcrumbList"><li class="breadcrumbs__item"><a aria-label="主页面" class="breadcrumbs__link" href="/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_k68T"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item"><a class="breadcrumbs__link" itemprop="item" href="/docs/database-readme"><span itemprop="name">数据库开发</span></a><meta itemprop="position" content="1"></li><li itemscope="" itemprop="itemListElement" itemtype="https://schema.org/ListItem" class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link" itemprop="name">1.B树和B+树的区别，为什么Mysql使用B+树存储索引</span><meta itemprop="position" content="2"></li></ul></nav><div class="tocCollapsible_UX9H theme-doc-toc-mobile tocMobile_TGc3"><button type="button" class="clean-btn tocCollapsibleButton_IqX3">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>1.B树和B+树的区别，为什么Mysql使用B+树存储索  引</h1></header><p>这个问题比较复杂，还在学习总结中。</p>
+<p><a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html" target="_blank" rel="noopener noreferrer" title="演示数据结构网址">演示数据结构网址</a><br>
+<a href="https://www.bilibili.com/video/BV1mY4y1W7pS" target="_blank" rel="noopener noreferrer" title="B站讲解">B站讲解</a></p>
+<h3 class="anchor anchorWithHideOnScrollNavbar_CN_B" id="1-树的进化">1. 树的进化<a href="#1-树的进化" class="hash-link" aria-label="1. 树的进化的直接链接" title="1. 树的进化的直接链接">​</a></h3>
+<p>B树又称B-树，其实是误解，没有B-树。（B-Tree）</p>
+<p>前置，从磁盘查找数据效率低，一是读写数据量大，二是读写次数多，导致效率低。</p>
+<p>索引为什么可以提高查找速度？参考字典</p>
+<p>用什么数据结构快呢？</p>
+<p><strong>线性结构</strong>，查找需要遍历比较慢，如果涉及插入删除，要移动元素，就更慢了。</p>
+<p><strong>哈希结构</strong>，一般很快，但是元素很多时，就会产生哈希冲突，数据散列不均匀，产生大量线性查询，效率低。
+遇到范围查询，得挨个遍历，哈希就不合适了。</p>
+<p>树结构，有很多类型，需单独学习。<br>
+<strong>二叉树</strong>，最简单的树，数据结构中学过。</p>
+<p><strong>二叉排序树</strong>，BST。左子树的结点的值都小于根结点的值，右子树的结点的值都大于根结点的值。查找效率高，O(logn)。<br>
+<!-- -->如果插入的值是顺序的，会退化成一个线性结构，最坏结果。</p>
+<p><strong>平衡二叉树</strong>，AVG。为了解决二叉排序树的缺点，插入数据的时候要保持二叉排序树的平衡，左子树和右子树的高度之差的绝对值不大于1。这样就避免了变成线性结构。<br>
+<!-- -->用插入的成本来弥补查询的效率。一旦出现插入操作多于查询操作的情况下，平衡二 叉树也就不适合了。开销很大。</p>
+<p><strong>红黑树</strong>，在AVG的基础上，加上最长子树不超过最短子树的2倍。目的是不让插入做大量的旋转，解决平衡二叉树的缺点。还有很多特点，java8 的 hashmap 中也有涉及。</p>
+<ul>
+<li>根结点是黑色。</li>
+<li>每个红色结点的两个子结点都是黑色。从每个叶子结点到根的所有路径上不能有两个连续的红色结点。</li>
+<li>从任一个结点到其每个叶子结点的所有路径都包含相同数目的黑色结点。</li>
+</ul>
+<p>口诀：左根右，根叶黑，不红红，黑路同。<br>
+<!-- -->数据量大时，树的深度很高，效率就低了。<br>
+<!-- -->二叉树的局限性导致的。所以多叉树开始出现。</p>
+<p><strong>B树</strong>就是一个有序的多路查询树。MongoDB<br>
+<!-- -->定义：满足下列要求的m叉树：</p>
+<ul>
+<li>
+<p>每个结点最多有m个孩子结点(最多有m-1个关键字)。以手为例，手指代表5个子结点，手掌代表根结点，手指间的缝隙代表指针或者叫关键字。</p>
+</li>
+<li>
+<p>结点的结构为
+<img loading="lazy" alt="B树的结点结构" src="/assets/images/B树的结点结构-86cb1f5e032e98fc4b8b2cad5f7ab368.PNG" width="584" height="93" class="img_THfu">
+n代表 结点有多少个关键字。<br>
+<!-- -->P表示指针，找到子树。<br>
+<!-- -->K表示关键字，间隔。<br>
+<img loading="lazy" alt="m=4的4阶B树" src="/assets/images/4阶B树-c2d3bfc1ad9e10b25e9cb9f214e5698e.PNG" width="889" height="227" class="img_THfu">
+最大关键字为3，所以是4阶B树。<br>
+<!-- -->可以发现是有序的，左边的都比根结点小，右边的都比根结点大。</p>
+</li>
+<li>
+<p>除根结点外，其他结点最少有 m/2 个孩子结点。（向上取整）</p>
+</li>
+<li>
+<p>如果根结点不是叶子结点，则根结点最少有两个孩子结点。</p>
+</li>
+<li>
+<p>所有叶子结点都在同一层上，即B树是所有结点的平衡因子均等  于0的多路查找树。</p>
+</li>
+<li>
+<p>除了根结点，其他结点都包含n个key，其中 <code>m/2 -1 &lt;= n &lt;= m-1</code>。key表示结点中的数据。</p>
+</li>
+</ul>
+<p>B树的缺点
+<img loading="lazy" alt="B树的缺点" src="/assets/images/B树的缺点-46dbf83322bbaec912f192cb2e5e3fda.PNG" width="1896" height="954" class="img_THfu">
+如果用B树存数据，每个结点用16K存16条数据，那么3层可以存 16x16x16 = 4096 条数据，这还是没有算指针等占用的空间的数据量，所以就太浪费空间了。如果要存更多数据，就要加树的层数，那么就会越加越多，效率也会越来越低（每一层表示一次磁盘IO）。<br>
+<!-- -->数据和关键字、指针在同一个结点上的缺点。<strong>B+树</strong>对此进行了优化，非叶子结点只存索引（键信息），叶子结点只存数据，可以存更多数据，效率就上来了（不要那么多层）。</p>
+<p>B树的删除
+<img loading="lazy" alt="B树的删除" src="/assets/images/B树的删除-1d7502f8dab51bd8d488c6a7ac119268.PNG" width="758" height="441" class="img_THfu">
+删除一个key，结点剩余的key数量仍然大于ceil(m/2)-1，可以直接删除。<br>
+<!-- -->兄弟不够借，把父节点拉到左边兄弟，然后跟左边兄弟合并，正好凑m-1个最大的节点。</p>
+<h3 class="anchor anchorWithHideOnScrollNavbar_CN_B" id="2-b树和b树的区别为什么mysql使用b树存储索引">2. B树和B+树的区别，为什么Mysql使用B+树存储索引<a href="#2-b树和b树的区别为什么mysql使用b树存储索引" class="hash-link" aria-label="2. B树和B+树的区别，为什么Mysql使用B+树存储索引的直接链接" title="2. B树和B+树的区别，为什么Mysql使用B+树存储索引的直接链接">​</a></h3>
+<p>B树的特点</p>
+<ul>
+<li>结点有序</li>
+<li>一个结点可以存多个元素，多个元素也排序了</li>
+<li>数据和指针在同一结点上</li>
+</ul>
+<p>B+树的特点</p>
+<ul>
+<li>拥有B树的特点</li>
+<li> 叶子结点之间有指针</li>
+<li>非叶子结点不保存数据，叶子结点只存数据。这样非叶子节点保存的关键字比B树多，所以树的高度低，存的数据多。</li>
+</ul>
+<p>Mysql索引使用B+树，因为B+树的特点通过对数据进行了排序提高了查询速度。一个叶子结点可以存储多个元素，从而使得B+树的高度不会太高。在Mysql中一个Innodb叶就是一个B+树节点，默认为16kb，所以一般情况下一颗两层的B+树可以存2000w行左右的数据。通过利用B+树叶子结点存储了所有数据并且排序，并且叶子结点之间有指针，可以很好的支持全表扫描，范围查找等SQL语句。</p>
+<p><img loading="lazy" alt="B+树" src="/assets/images/B+树-31598a3bd0a570bd2c3f75c857ba5a71.PNG" width="1840" height="932" class="img_THfu"></p></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label="文件选项卡"><a class="pagination-nav__link pagination-nav__link--prev" href="/docs/database-readme"><div class="pagination-nav__sublabel">上一页</div><div class="pagination-nav__label">简介</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/docs/mysql-index"><div class="pagination-nav__sublabel">下一页</div><div class="pagination-nav__label">2.MySq常见的索引类型及语法</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_jeP5 thin-scrollbar theme-doc-toc-desktop" style="opacity:0;transform:translateX(100px) translateZ(0)"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#1-树的进化" class="table-of-contents__link toc-highlight">1. 树的进化</a></li><li><a href="#2-b树和b树的区别为什么mysql使用b树存储索引" class="table-of-contents__link toc-highlight">2. B树和B+树的区别，为什么Mysql使用B+树存储索引</a></li></ul><hr class="hr_UhE0"><span class="percent_H6RK">0%<!-- --> </span></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="col footer__col"><div class="footer__title">学习</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/blog">博客</a></li><li class="footer__item"><a class="footer__link-item" href="/blog/archive">归档</a></li><li class="footer__item"><a class="footer__link-item" href="/docs/skill">技术笔记</a></li></ul></div><div class="col footer__col"><div class="footer__title">社交媒体</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/about">关于我</a></li><li class="footer__item"><a href="https://github.com" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_wX1q"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li><li class="footer__item"><a href="https://juejin.cn" target="_blank" rel="noopener noreferrer" class="footer__link-item">掘金<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_wX1q"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li></ul></div><div class="col footer__col"><div class="footer__title">更多</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://yuchee.gitee.io/xiaoyouxi" target="_blank" rel="noopener noreferrer" class="footer__link-item">H5小游戏<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_wX1q"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li><li class="footer__item"><a href="https://yuchee.gitee.io/alittle/tetris" target="_blank" rel="noopener noreferrer" class="footer__link-item">俄罗斯方块<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_wX1q"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a></li><li class="footer__item">
+                <a href="https://docusaurus.io/zh-CN/" target="_blank" rel="noreferrer noopener">
+                  <img src="/img/buildwith.png" alt="build with docusaurus" width="120" height="50">
+                <a>
+                </a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">
+        <p style="margin-bottom: 0;"><a href="http://beian.miit.gov.cn/">XX备XXXXXX号-2</a></p>
+        <p style="display: inline-flex; align-items: center;"><img style="height:20px;margin-right: 0.5rem;" src="/img/police.png" alt="police" height="20"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=undefined">XX网安备XXXXXXXXXX号</a></p>
+        <p>Copyright © 2022 - PRESENT 渔歌 Built with Docusaurus.</p>
+        </div></div></div></footer></div>
+</body>
+</html>
