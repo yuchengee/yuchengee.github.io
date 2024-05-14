@@ -1,0 +1,183 @@
+---
+slug: markdown-features
+title: markdown语法特性
+date: 2022-12-11T15:00
+authors: yuchengee
+tags: [网站建设]
+---
+markdown非常好用，可以写出漂亮的文档，如果不会使用，参考[markdown语法学习](https://docusaurus.io/docs/markdown-features)。
+<!--truncate-->
+
+### 1. MDX
+博客文章支持 Docusaurus Markdown features 功能，例如 MDX，可以在博客中调用js。
+
+:::tip
+使用 React 的强大功能创建交互式博客文章。
+
+```js
+<button onClick={() => alert('button clicked!')}>Click me!</button>
+```
+
+<button onClick={() => alert('button clicked!')}>Click me!</button>
+:::
+
+
+### 2. Details 元素示例
+<details>
+  <summary>点我！</summary>
+  <div>
+    <div>这是详情内容</div>
+    <br/>
+    <details>
+      <summary>
+        嵌套的下拉栏！ 内含惊喜……
+      </summary>
+      <div>
+        😲😲😲😲😲
+      </div>
+    </details>
+  </div>
+</details>
+
+### 3. 选项卡
+Docusaurus提供了 `Tabs` 组件，你可以通过 MDX 在 Markdown 中使用  
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs>
+<TabItem value="js" label="JavaScript">
+
+```js
+function helloWorld() {
+  console.log('Hello, world!');
+}
+```
+
+</TabItem>
+<TabItem value="py" label="Python">
+
+```py
+def hello_world():
+  print("Hello, world!")
+```
+
+</TabItem>
+<TabItem value="java" label="Java">
+
+```java
+class HelloWorld {
+  public static void main(String args[]) {
+    System.out.println("Hello, World");
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+### 4. 图片
+![网站logo](/img/logo.png)
+
+### 5. 文件下载
+<a target="\_blank" href={require('/img/logo.png').default}> 下载这个图片 </a>  
+
+[使用markdown下载这个文件](/img/test.zip)
+
+### 6.跳转
+[博客优化-同路径](12-11-博客优化.md)  
+[XML读写相关-相对路径](../2022/12-12-XML读写相关.md)  
+[XML读写相关-绝对路径](/2022/12-12-XML读写相关.md)
+
+
+### 7.换行
+在Markdown中，要实现换行，可以有以下几种方式：
+
+1. 使用双空格加回车（`  ` + 回车）：在一行的末尾加上两个空格，然后回车，即可进行换行。
+
+2. 直接插入一个空行：在两行文本之间插入一个空行，即可实现换行。
+
+3. 使用HTML的 `<br>` 标签：在需要换行的地方插入 `<br>` 标签，即可实现换行效果。
+
+例如：
+```
+这是第一行  
+这是第二行
+
+这是第三行<br>这是第四行
+```
+
+以上三种方式都可以实现在Markdown中换行的效果。
+
+
+### 8. 提示-警告等
+```
+:::note
+这是备注的文本。
+:::
+
+:::tip
+这是提示文本。
+:::
+
+:::info
+这是信息文本。
+:::
+
+:::caution
+这是警告文本。
+:::
+
+
+:::danger
+这是危险文本。
+:::
+```
+
+:::note
+这是备注的文本。
+:::
+
+:::tip
+这是提示文本。
+:::
+
+:::info
+这是信息文本。
+:::
+
+:::caution
+这是警告文本。
+:::
+
+:::danger
+这是危险文本。
+:::
+
+
+### 9. 代码块
+```ts title='user.entity.ts' icon='logos:nestjs'
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number
+
+  @Column()
+  name: string
+}
+```
+
+```ts title='user.entity.ts' icon='logos:java'
+public class User {
+  private String name;
+
+  // highlight-start
+  private int age;
+  // highlight-end
+}
+```
+
+### 10. 链接
+```
+[官方下载地址](https://xxx "官方下载地址")
+```
