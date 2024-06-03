@@ -3,7 +3,7 @@ export const projects: Project[] = [
     title: '渔歌-yuchengee',
     description: '🦖 基于 Docusaurus 静态网站生成器实现个人博客， 原作者kuizuo',
     preview: '/img/project/blog.png',
-    website: 'https://yuchee.gitee.io',
+    website: 'https://yuchee.github.io',
     source: 'https://github.com/kuizuo/blog',
     tags: ['opensource', 'design', 'favorite', 'personal'],
     type: 'web',
